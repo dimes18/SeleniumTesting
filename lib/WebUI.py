@@ -36,13 +36,15 @@ class WebCrawler():
             resp = requests.head(url)
             assert resp.status_code < 400, "Provide a valid URL!"
             self.webpagedriver.get(url)
-            return True
+            self.status = True
+            return self.status
         except AssertionError as err:
             print("URL Error: {}".format(err))
+            self.status = False
         except Exception as err:
             print("WebDriver Error: {}".format(err))
             self.status = False
-        return False
+        return self.status
 
     def set_action(self, xpath):
         assert self.status, "No Active browser!"
@@ -51,8 +53,10 @@ class WebCrawler():
         time.sleep(1)
         try:
             obj.click()
+            return True
         except Exception as err:
             print("Error: {}".format(err))
+        return False
 
     def get_value(self, xpath, property=None):
         assert self.status, "No Active browser!"
@@ -68,9 +72,11 @@ class WebCrawler():
 
 
 if __name__ == "__main__":
-    contact_button = '//*[@id="nav-contact"]/a'
+    contact_page = '//*[@id="nav-contact"]/a'
     xp_brand = '/html/body/div[1]/div/div/a[2]'
     firefoxcrawler = WebCrawler("Firefox", "C:\\Selenium\\SeleniumTesting\\geckodriver.exe")
     if firefoxcrawler.open_url("http://jupiter.cloud.planittesting.com"):
         brand = firefoxcrawler.get_value(xp_brand)
         print(brand)
+        if firefoxcrawler.set_action(contact_page):
+            print("Contacts page")
