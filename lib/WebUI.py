@@ -24,7 +24,7 @@ class WebCrawler():
                 self.browsertype["marionette"] = True
                 self.func = getattr(webdriver, self.browser.capitalize())
                 self.webpagedriver = self.func(capabilities=self.browsertype,
-                                            executable_path=self.driver)
+                                               executable_path=self.driver)
                 self.status = True
             else:
                 print("Unsupported Browser!")
@@ -80,3 +80,4 @@ if __name__ == "__main__":
         print(brand)
         if firefoxcrawler.set_action(contact_page):
             print("Contacts page")
+        pass
