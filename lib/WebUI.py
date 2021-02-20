@@ -55,11 +55,11 @@ class WebCrawler():
             obj.click()
             return True
         except Exception as err:
-            print("Error: {}".format(err))
+            print("Error setting action: {}".format(err))
         return False
 
     def get_value(self, xpath, property=None):
-        assert self.status, "No Active browser!"
+        #assert self.status, "No Active browser!"
         assert xpath is not None, "Xpath cannot be empty!"
         try:
             obj = self.webpagedriver.find_element_by_xpath(xpath)
@@ -67,9 +67,62 @@ class WebCrawler():
                 return obj.get_property(property)
             return obj.text
         except Exception as err:
-            print("Error: {}".format(err))
+            print("Error getting value: {}".format(err))
+        return None
+    
+    def get_values(self, xpath):
+        #assert self.status, "No Active browser!"
+        assert xpath is not None, "Xpath cannot be empty!"
+        values = []
+        try:
+            object_elements = self.webpagedriver.find_elements_by_xpath(xpath)
+            for o in object_elements:
+                values.append(o.text)
+            return values
+        except Exception as err:
+            print("Error getting elements: {}".format(err))
         return None
 
+    def get_form_inputs(self, count, label_xpath, input_xpath, mandatory=False):
+        #assert self.status, "No Active browser!"
+        assert label_xpath is not None, "Label Xpath cannot be empty!"
+        assert input_xpath is not None, "Input Xpath cannot be empty!"
+        labelxpaths = []
+        inputxpaths = []
+        try:
+            for idx in range(count):
+                if mandatory:
+                    if "*" in self.get_value("{}[{}]/label".format(label_xpath, str(idx))):                        
+                        labelxpaths.append("{}[{}]/label".format(label_xpath, str(idx)))
+                        inputxpaths.append("{}[{}]/label".format(input_xpath, str(idx)))
+                    else:
+                        continue
+                else:
+                    labelxpaths.append("{}[{}]/label".format(label_xpath, str(idx)))
+                    inputxpaths.append("{}[{}]/label".format(input_xpath, str(idx)))
+            return labelxpaths, inputxpaths
+        except Exception as err:
+            print("Error getting form inputs: {}".format(err))
+        return None, None
+
+    def fill_form_inputs(self, values, input_xpaths, mandatory=False):        
+        assert len(input_xpaths) < 1, "Input Xpath cannot be empty!"
+        assert len(values) != len(input_xpaths), "Input values and xpaths must tally!"
+        count = 0
+        try:
+            for idx, xpath in enumerate(input_xpaths):
+                try:
+                    element = self.webpagedriver.find_element_by_xpath(xpath)
+                    element.send_keys(values[idx])
+                    count+=1
+                except Exception as err:
+                    print("Error accessing input element: {}".format(err))
+            if count == len(values):
+                return True
+            return False
+        except Exception as err:
+            print("Error form inputs: {}".format(err))
+        return False
 
 if __name__ == "__main__":
     contact_page = '//*[@id="nav-contact"]/a'
