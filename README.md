@@ -31,10 +31,13 @@ Platform: Windows 10 64bit, Language: Python 3.4
 ```
 
 ### Activate venv
-	C:\Selenium\SeleniumTesting\.venv\Scripts>activate
-### Install selenium in venv
 ```
-	pip install -U selenium
+	C:\Selenium\SeleniumTesting\.venv\Scripts>activate
+	(.venv) C:\Selenium\SeleniumTesting\
+```
+### Install selenium and other Requirements in venv
+```
+	pip install -R Requirements.txt
 	check installed package - 
 	(.venv) C:\Selenium\SeleniumTesting\.venv\Lib>cd site-packages
 	Directory of C:\Selenium\SeleniumTesting\.venv\Lib\site-packages
