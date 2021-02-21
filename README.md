@@ -45,6 +45,6 @@ Platform: Windows 10 64bit, Language: Python 3.4
 * webpage: https://jupiter.cloud.planittesting.com
 
 ```
-	(.venv) C:\Selenium\SeleniumTesting>.venv\Scripts\python testdriver.py
+	(.venv) C:\Selenium\SeleniumTesting>.venv\Scripts\python verifydriver.py
     Brand: Jupiter Toys
 ```
