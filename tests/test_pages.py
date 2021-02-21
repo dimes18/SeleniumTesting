@@ -81,8 +81,7 @@ class PlanitTesting(unittest.TestCase):
         self.assertFalse(self.contact_page.validate_form_errors("email"))
         self.assertTrue(self.contact_page.populate_required_fields(msg="   "))
         self.assertFalse(self.contact_page.validate_form_errors("msg"))
-        self.assertTrue(self._wait_for_warning_header("but we won't get it unless" \
-                                                      "you complete the form correctly"))
+        self.assertTrue(self._wait_for_warning_header("complete the form correctly"))
 
     def test_case_4(self):
         """
