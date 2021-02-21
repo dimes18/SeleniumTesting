@@ -14,6 +14,6 @@ if __name__ == "__main__":
     webpagedriver.get('http://jupiter.cloud.planittesting.com')
     xp_brand = '/html/body/div[1]/div/div/a[2]'
     obj = webpagedriver.find_element_by_xpath(xp_brand)
-    print("Brand: {}".format(obj.text))        
+    print("Brand: {}".format(obj.text))
     
     

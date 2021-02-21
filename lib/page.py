@@ -1,8 +1,21 @@
+"""
+page.py: Implements reusable code for handling/interfacing different
+         pages for automation
+
+__author__ = "Don Ariston Urbano"
+__credits__ = ["https://selenium-python.readthedocs.io/index.html"]
+"""
+
 import time
 from lib.element import BasePageElement
-from lib.locators import *
+from lib.locators import MainPageLocators, \
+                         ContactPageLocators, \
+                         ShopPageLocators, \
+                         CartPageLocators, \
+                         Keys
 
-class SearchTextElement(BasePageElement):
+class SearchElement(BasePageElement):
+    """ Inherit Descriptor class  """
     pass
 
 class BasePage(object):
@@ -10,11 +23,18 @@ class BasePage(object):
     def __init__(self, driver):
         self.driver = driver
 
-    wait_for_back_button = SearchTextElement(resource=MainPageLocators.SUCCESS_MSG['back_button'])
-    wait_for_warning_header = SearchTextElement(resource=ContactPageLocators.FORM_WARNINGS['header'])
-    wait_for_forename_err = SearchTextElement(resource=ContactPageLocators.FORM_WARNINGS['forename'])
-    wait_for_email_err = SearchTextElement(resource=ContactPageLocators.FORM_WARNINGS['email'])
-    wait_for_msg_err = SearchTextElement(resource=ContactPageLocators.FORM_WARNINGS['msg'])
+    @staticmethod
+    def slow_typing(element, input_value, delay):
+        """ Simulate keyboard typing """
+        for char in input_value:
+            element.send_keys(char)
+            time.sleep(delay)
+
+    wait_for_back_button = SearchElement(resource=MainPageLocators.SUCCESS_MSG['back_button'])
+    wait_for_warning_header = SearchElement(resource=ContactPageLocators.FORM_WARNINGS['header'])
+    wait_for_forename_err = SearchElement(resource=ContactPageLocators.FORM_WARNINGS['forename'])
+    wait_for_email_err = SearchElement(resource=ContactPageLocators.FORM_WARNINGS['email'])
+    wait_for_msg_err = SearchElement(resource=ContactPageLocators.FORM_WARNINGS['msg'])
 
 class MainPage(BasePage):
     """Home Page methods"""
@@ -24,6 +44,7 @@ class MainPage(BasePage):
         return keyword in self.driver.title
 
     def go_home_page(self):
+        """Click home """
         try:
             element = self.driver.find_element(*MainPageLocators.HOME_LINK)
             element.click()
@@ -33,6 +54,7 @@ class MainPage(BasePage):
         return False
 
     def go_contact_page(self):
+        """Click shop contact item"""
         try:
             element = self.driver.find_element(*MainPageLocators.CONTACT_LINK)
             element.click()
@@ -42,6 +64,7 @@ class MainPage(BasePage):
         return False
 
     def go_shop_page(self):
+        """Click shop menu item"""
         try:
             element = self.driver.find_element(*MainPageLocators.SHOP_LINK)
             element.click()
@@ -51,6 +74,7 @@ class MainPage(BasePage):
         return False
 
     def go_cart_page(self):
+        """Click cart menu item"""
         try:
             element = self.driver.find_element(*MainPageLocators.CART_LINK)
             element.click()
@@ -79,8 +103,8 @@ class ContactPage(BasePage):
             for key in kwargs:
                 assert key in ContactPageLocators.FORM_FIELDS
                 element = self.driver.find_element(*ContactPageLocators.FORM_FIELDS[key])
-                element.send_keys(kwargs[key])
-                element.send_keys(KeyboardKeys.TAB)
+                self.slow_typing(element, kwargs[key], 0.3)
+                self.slow_typing(element, Keys.TAB, 0.3)
             return True
         except Exception as err:
             print("Error: {}".format(err))
@@ -124,7 +148,7 @@ class ShopPage(BasePage):
         total = element.get_attribute("childElementCount")
         return total
 
-    def find_item_locators(self, buyitems={}):
+    def find_item_locators(self, buyitems=dict):
         """find the locator of the selected products"""
         assert buyitems is not None, "Missing items to buy!"
         locators = {}
@@ -134,7 +158,7 @@ class ShopPage(BasePage):
                 product_name = ShopPageLocators.PRODUCT_ITEMS["name"]
                 product_button = ShopPageLocators.PRODUCT_ITEMS["button"]
                 element = self.driver.find_element(ShopPageLocators.PRODUCT_ITEMS["searchtype"],
-                                                product_name.format(idx+1))
+                                                   product_name.format(idx+1))
                 product = element.get_attribute("innerText")
                 for key in buyitems:
                     if key.lower() != product.lower():
@@ -145,7 +169,7 @@ class ShopPage(BasePage):
             print("Error: {}".format(err))
         return locators
 
-    def click_buy_product(self, locators, buyitems={}):
+    def click_buy_product(self, locators, buyitems=dict):
         """Buy the selected product items"""
         assert len(locators) == len(buyitems), "Quantities not tally with Buy Items!"
         try:
@@ -156,7 +180,7 @@ class ShopPage(BasePage):
                     qty = buyitems[key]
                     for _ in range(qty):
                         element = self.driver.find_element(ShopPageLocators.PRODUCT_ITEMS["searchtype"],
-                                                    locators[product])
+                                                           locators[product])
                         element.click()
                         time.sleep(0.5)
             return True
@@ -167,7 +191,7 @@ class ShopPage(BasePage):
 class CartPage(BasePage):
     """Shop Page methods"""
 
-    def find_cart_item_locators(self, buyitems={}):
+    def find_cart_item_locators(self, buyitems=dict):
         """find the locator of the cart items"""
         assert buyitems is not None, "Missing items to buy!"
         locators = {}
@@ -177,26 +201,26 @@ class CartPage(BasePage):
                 item_name = CartPageLocators.CART_ITEMS["name"]
                 item_qty = CartPageLocators.CART_ITEMS["qty"]
                 element = self.driver.find_element(CartPageLocators.CART_ITEMS["searchtype"],
-                                                item_name.format(idx+1))
+                                                   item_name.format(idx+1))
                 item = element.get_attribute("innerText")
                 for key in buyitems:
                     if key.lower() in item.lower():
-                        continue
-                    locators[key] = item_qty.format(idx+1)
-                    break
+                        locators[key] = item_qty.format(idx+1)
+                        break
+
         except Exception as err:
-            print("Error: {}".format(err))
+            print("Cart Items Error: {}".format(err))
         return locators
 
     def click_empty_cart(self):
-        #TODO
+        """TODO"""
         pass
 
     def get_total_quantity(self):
-        #TODO
+        """TODO"""
         pass
 
-    def compare_product_quantity(self, locators, buyitems={}):
+    def compare_product_quantity(self, locators, buyitems=dict):
         """Verify if items selected is in correct quantity"""
         assert len(locators) == len(buyitems), "Buy items not tally with Cart Items!"
         result = True
@@ -214,5 +238,5 @@ class CartPage(BasePage):
                     break
             return result
         except Exception as err:
-            print("Error: {}". format(err))
+            print("Cart Quantity Error: {}". format(err))
         return False
