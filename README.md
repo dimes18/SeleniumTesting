@@ -51,3 +51,7 @@ Platform: Windows 10 64bit, Language: Python 3.4
 	(.venv) C:\Selenium\SeleniumTesting>.venv\Scripts\python verifydriver.py
     Brand: Jupiter Toys
 ```
+
+## Running the Test Cases 
+
+[User Guide](https://github.com/dimes18/SeleniumTesting/blob/main/tests/USERGUIDE.md)
