@@ -3,8 +3,7 @@ Implementation of Page Objects Design Pattern<sup>1</sup> to achieve the followi
 * Separate test code from web application interface code
 * Readable Test cases
 * Improved code readability/reusability
-* Modify only 1 place in the framework whenever the web/interface changes
-<br>
+* Modify only 1 place in the framework whenever the web/interface changes<br/>
 <sup>1</sup>https://selenium-python.readthedocs.io/page-objects.html
 ---
 ## Selenium Webdriver using Python
